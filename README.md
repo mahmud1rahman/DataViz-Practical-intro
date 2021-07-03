@@ -1,2 +1,2 @@
 # DataViz-Practical-intro
-Work through thecode examples from the book https://socviz.co/index.html#preface
+Work through the code examples from the book https://socviz.co/index.html#preface
