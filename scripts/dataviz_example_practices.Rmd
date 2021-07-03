@@ -1,0 +1,26 @@
+---
+title: "starting_codes"
+author: "Mahmudur Rahman"
+date: "03/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+ 
+ Work through the code examples from the book [https://socviz.co/index.html#preface]
+ 
+ ## Load libraries 
+```{r}
+my_packages <- c("tidyverse", "broom", "coefplot", "cowplot",
+                 "gapminder", "GGally", "ggrepel", "ggridges", "gridExtra",
+                 "here", "interplot", "margins", "maps", "mapproj",
+                 "mapdata", "MASS", "quantreg", "rlang", "scales",
+                 "survey", "srvyr", "viridis", "viridisLite", "devtools")
+
+install.packages(my_packages, repos = "http://cran.rstudio.com")
+
+devtools::install_github("kjhealy/socviz")
+```
+
