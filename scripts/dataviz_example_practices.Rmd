@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,fig.width=8, fig.height=5)# setting the default size of the  plots within the r markdown
 ```
  
  Work through the code examples from the book [https://socviz.co/index.html#preface]
@@ -19,8 +19,29 @@ my_packages <- c("tidyverse", "broom", "coefplot", "cowplot",
                  "mapdata", "MASS", "quantreg", "rlang", "scales",
                  "survey", "srvyr", "viridis", "viridisLite", "devtools")
 
-install.packages(my_packages, repos = "http://cran.rstudio.com")
+# install.packages(my_packages, repos = "http://cran.rstudio.com")
+library(tidyverse)
 
-devtools::install_github("kjhealy/socviz")
+# devtools::install_github("kjhealy/socviz")
+```
+
+Aesthetics can be mapped per geom
+Below Color is mapped to continent on geom_point not on the smooth.this could be done on globally too 
+```{r example}
+gapminder <- gapminder::gapminder
+
+gapminder %>% 
+  ggplot(aes(gdpPercap,lifeExp))+
+  geom_point(aes(color = continent))+
+  geom_smooth(method = "loess")+
+  scale_x_log10()
+
+
+gapminder %>% 
+  ggplot(aes(gdpPercap,lifeExp))+
+  geom_point(aes(color = log(pop)))+
+  geom_smooth(method = "loess")+
+  scale_x_log10()
+
 ```
 
