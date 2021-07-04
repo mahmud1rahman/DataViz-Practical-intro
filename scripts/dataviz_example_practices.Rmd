@@ -131,8 +131,31 @@ ggplot(aes(religion,pct,fill = religion ))+
   theme_ipsum()
 ```
 
-```{r}
 
+Continuous variables by group or category
+```{r}
+ # decade’s worth of information on the donation of organs for transplants in seventeen OECD countries.
+# data comes from socviz library()
+
+organdata %>% 
+  select(1:5) %>% 
+  sample_n(size = 10) %>% # looking at 5 columns randomly %>% 
+
+  
+organdata %>% 
+    ggplot(aes(year,donors))+
+    geom_line(aes(group = country))+
+    facet_wrap(~ country)+
+  theme_ipsum()
+
+
+```
+By default the facets are ordered alphabetically by country
+# Box plot
+```{r}
+organdata %>% 
+  ggplot(aes(country,donors))+
+  geom_boxplot()
 ```
 
 
