@@ -28,6 +28,7 @@ library(srvyr)
 library(survey)
 library(devtools)
 library(socviz)
+library(kableExtra)
 
 # devtools::install_github("kjhealy/socviz")
 ```
@@ -89,7 +90,58 @@ Approach:
 We want a table of tidy data, a mapping of variables to aesthetic elements, and a particular type of graph. If you can keep sight of this, it will make it easier to confidently approach the job of getting any particular graph to look just right.
 ```{r}
 glimpse(gss_sm) # data from socviz pkg
-gss_sm %>% view()
+gss_sm 
+
 
 ```
+Create a table from gss_sm df
+```{r}
+rel_by_region <- gss_sm %>% 
+  group_by(bigregion,religion) %>% 
+  summarise(total = n()) %>% 
+  mutate(freq = total/sum(total),
+         pct = round((freq*100),0))
+
+rel_by_region %>% 
+ggplot(aes(bigregion,pct,fill = religion))+
+  geom_col(position = "identity") #position = "identity" means “just plot the values as given”.
+  
+rel_by_region %>% 
+ggplot(aes(bigregion,pct,fill = religion ))+
+  geom_col(position = "dodge2") + # dodge2 gets spaced bar 
+  theme_ipsum()+
+  labs(x = "Religion",
+       y = "Percent",
+       fill = "Religion")+ # Renaming legend title 
+  theme(legend.position = "top",legend.title = element_text(face = "bold",size = 12))+
+  theme(legend.text = element_text(face = "bold",size = 10))
+  
+# the plots not is not that good , two crowded, lets imporove on it .
+# dodge charts can be clearly expressed as factes plots
+
+rel_by_region %>% 
+ggplot(aes(religion,pct,fill = religion ))+
+  geom_col(position = "dodge2") +
+  coord_flip()+
+  guides(fill = F)+ # removes legend 
+    facet_grid(~ bigregion)+
+  labs(x = "Religion",
+       y = "Percent",
+       fill = "Religion")+
+  theme_ipsum()
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
 
