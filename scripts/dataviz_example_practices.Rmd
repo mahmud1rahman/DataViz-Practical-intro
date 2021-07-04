@@ -21,6 +21,7 @@ my_packages <- c("tidyverse", "broom", "coefplot", "cowplot",
 
 # install.packages(my_packages, repos = "http://cran.rstudio.com")
 library(tidyverse)
+library(ggrepel)
 library(hrbrthemes)
 library(ggthemes)
 library(scales)
@@ -278,7 +279,7 @@ facet_wrap(~ consent_law,ncol = 1)+
   
 ```
 
-## Extending  Cleveland-style dotplot
+## Extending Cleveland-style dotplot
 ```{r}
 by_country %>% 
   ggplot(aes(fct_reorder(country,donors_mean),donors_mean))+
@@ -286,10 +287,45 @@ by_country %>%
                       ymax = donors_mean + donors_sd))+
   coord_flip()+
   labs(x = "",
-       y = "\nDononrs Procurement Rate")
-# Figure 5.15: A dot-and-whisker plot, with the range defined by the standard deviation of the measured variable.
+       y = "\nDononrs Procurement Rate",
+       title = "Variance in procuremnt in each countries ")
+
+ggsave(here::here( "output", "dot_and_whisker_plot.png"),width = 5, height = 5, dpi  = 150, units = "in", device='png')
+
+# Figure:A dot-and-whisker plot, with the range defined by the standard deviation of the measured variable.
 ```
 
+# Plot text directly
+```{r}
+# adding text a scatter plot
+
+by_country %>% 
+  ggplot(aes(roads_mean,donors_mean))+
+  geom_point()+
+  geom_text_repel(aes(label = country))
+
+ggsave(here::here( "output", "plot_with_text.png"),width = 6, height = 6, dpi  = 150, units = "in", device='png')
+
+```
+
+We will use geom_text_repel() instead of geom_text(). To demonstrate some of what geom_text_repel() can do, we will switch datasets and work with some historical U.S. presidential election data provided in the socviz library.
+
+```{r}
+elections_historic %>% 
+  select(2:7) %>% 
+  sample_n(size= 5)
+
+# define labels 
+p_title <- "Presidential Elections: Popular & Electoral College Margins"
+p_subtitle <- "1824-2016"
+p_caption <- "Data for 2016 are provisional."
+x_label <- "Winner's share of Popular Vote"
+y_label <- "Winner's share of Electoral College Votes"
+  
+
+elections_historic %>% 
+  ggplot(aes())
+```
 
 
 
