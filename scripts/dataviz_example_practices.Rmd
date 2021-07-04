@@ -178,7 +178,7 @@ organdata %>%
   theme(legend.position = "top")
 
 
-ggsave(here::here( "output", "plot_point_not_bx_plot.png"))
+ggsave(here::here( "output", "plot_point_not_bx_plot.png"),width = 10, height = 8, dpi = 150, units = "in", device='png')
 ```
 
 
