@@ -191,7 +191,7 @@ When there is over plotting of observationsin values and in order to get a bette
 geom_jitter randomly nudges observations by a small amount.
 
 ```{r}
-# jitter the points
+# jitter the points/Cleveland dotplot
 organdata %>% 
   ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
   geom_jitter()+
@@ -214,6 +214,8 @@ organdata %>%
   theme_ipsum()+
   labs(x = NULL)+
   theme(legend.position = "top")
+
+ggsave(here::here( "output", "Cleveland dotplot.png"),width = 5, height = 5, dpi = 150, units = "in", device='png')
 ```
 
 
