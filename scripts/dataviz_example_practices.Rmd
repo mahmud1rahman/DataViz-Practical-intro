@@ -21,6 +21,13 @@ my_packages <- c("tidyverse", "broom", "coefplot", "cowplot",
 
 # install.packages(my_packages, repos = "http://cran.rstudio.com")
 library(tidyverse)
+library(hrbrthemes)
+library(ggthemes)
+library(scales)
+library(srvyr)
+library(survey)
+library(devtools)
+library(socviz)
 
 # devtools::install_github("kjhealy/socviz")
 ```
@@ -44,10 +51,45 @@ gapminder %>%
   scale_x_log10()
 
 gapminder %>% 
+  filter(continent != "Oceania",
+         year >1992) %>% 
   ggplot(aes(gdpPercap,lifeExp))+
   geom_point(aes(color = factor(year)))+
   geom_smooth(method = "loess")+
-  scale_x_log10()
+  scale_x_log10()+
+  facet_grid(factor(year)~ continent)+
+  theme_hc()
+  # theme_wsj()+
+  # scale_colour_wsj("colors6")
+```
+
+# Show the right numbers 
+```{r}
+
+# faceting by continents
+gapminder %>% 
+  filter(continent != "Oceania") %>% 
+  ggplot(aes(year, gdpPercap))+
+  geom_line(aes(group = country,color = continent))+
+  facet_wrap(~ continent,nrow = 1)+
+  scale_y_log10(labels = dollar)+
+  theme_wsj()+
+  scale_color_calc()+
+  labs(x = "Year",
+       y = "Gdp per cappita",
+       title = "Gpd per capita on four continents")
+
+```
+
+
+Plot customisation 
+scale, guide  and theme function to get more ocontrol over the content and appreance of the graphs 
+
+Approach:
+We want a table of tidy data, a mapping of variables to aesthetic elements, and a particular type of graph. If you can keep sight of this, it will make it easier to confidently approach the job of getting any particular graph to look just right.
+```{r}
+glimpse(gss_sm) # data from socviz pkg
+gss_sm %>% view()
 
 ```
 
