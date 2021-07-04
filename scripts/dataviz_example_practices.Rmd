@@ -30,6 +30,7 @@ library(devtools)
 library(socviz)
 library(kableExtra)
 library(here)
+theme_set(theme_ipsum())
 
 # devtools::install_github("kjhealy/socviz")
 ```
@@ -216,6 +217,40 @@ organdata %>%
   theme(legend.position = "top")
 
 ggsave(here::here( "output", "Cleveland dotplot.png"),width = 5, height = 5, dpi = 150, units = "in", device='png')
+```
+
+## Average donation rate
+```{r}
+by_country <- organdata %>% 
+  group_by(consent_law,country) %>% 
+  summarise(donors_mean = mean(donors, na.rm = TRUE),
+            donors_sd = sd(donors, na.rm = TRUE),
+              gdp_mean = mean(gdp, na.rm = TRUE),
+              health_mean = mean(health, na.rm = TRUE),
+              roads_mean = mean(roads, na.rm = TRUE),
+              cerebvas_mean = mean(cerebvas, na.rm = TRUE))
+by_country
+
+# better approach with functional programming for above code 
+
+# Sometimes graphing functions can get confused by grouped tibbles where we don’t explicitly use the groups in the plot.
+by_country %>% 
+  group_by(consent_law,country) %>% 
+  summarise_if(is.numeric, funs(mean,sd), na.rm = TRUE) %>% 
+  ungroup() # so that the result is a plain tibble.
+
+
+#Figure: A Cleveland dotplot, with colored points
+p <- by_country %>% 
+  ggplot(aes(donors_mean,fct_reorder(country,donors_mean),color = consent_law))
+
+p+geom_point(size = 3)+
+  labs(x= "Donor Rrocurement Rate",
+       y = "",
+       color = "Consent Law")+
+  theme(legend.position = "top")
+
+ggsave(here::here( "output", "donor_procurement_rate.png"),width = 5, height = 5, dpi = 150, units = "in", device='png')
 ```
 
 
