@@ -181,15 +181,17 @@ organdata %>%
   theme(legend.position = "top")
 
 
-ggsave(here::here( "output", "plot_point_not_bx_plot.png"),width = 6, height = 8, dpi = 150, units = "in", device='png')
+ggsave(here::here( "output", "plot_point_not_bx_plot.png"),width = 6, height = 6, dpi = 150, units = "in", device='png')
 
 ```
 
 # geom_jitter
 
-When there is over plotting of observationsin values and in order to get a better sense of how many observations there are at different values we can use geom_jitter
+When there is over plotting of observationsin values and in order to get a better sense of how many observations there are at different values we can use geom_jitter.
+geom_jitter randomly nudges observations by a small amount.
 
 ```{r}
+# jitter the points
 organdata %>% 
   ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
   geom_jitter()+
@@ -203,6 +205,15 @@ dev.off()
 
 # dev.off() after all the plotting, to save the file and return control to the screen.
 # execute this code after creating the plot to finish creating the image file
+
+# The default amount of jitter is a little too much for our purposes. We can control it using height and width arguments to a position_jitter() function within the geom. Because we’re making a one-dimensional summary here, we just need width.
+organdata %>% 
+  ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
+  geom_jitter(position = position_jitter(width = 0.15))+
+  coord_flip()+
+  theme_ipsum()+
+  labs(x = NULL)+
+  theme(legend.position = "top")
 ```
 
 
