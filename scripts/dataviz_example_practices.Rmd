@@ -239,8 +239,11 @@ by_country %>%
   summarise_if(is.numeric, funs(mean,sd), na.rm = TRUE) %>% 
   ungroup() # so that the result is a plain tibble.
 
+```
 
+Cleveland dotplots are generally preferred to bar or column charts.
 #Figure: A Cleveland dotplot, with colored points
+```{r}
 p <- by_country %>% 
   ggplot(aes(donors_mean,fct_reorder(country,donors_mean),color = consent_law))
 
@@ -250,9 +253,29 @@ p+geom_point(size = 3)+
        color = "Consent Law")+
   theme(legend.position = "top")
 
-ggsave(here::here( "output", "donor_procurement_rate.png"),width = 5, height = 5, dpi = 150, units = "in", device='png')
+ggsave(here::here( "output", "donor_procurement_rate.png"),width = 6, height = 6, dpi  = 150, units = "in", device='png')
 ```
 
+## Facet wrap
+where one axis is categorical, as here, we can free the categorical axis and leave the continuous one fixed. The result is that each panel shares the same x-axis, and it is easy to compare between them.
+```{r}
+p+
+ geom_point(size = 3)+
+facet_wrap(~ consent_law,scales = "free_y",ncol = 1)+
+    labs(x= "Donor Rrocurement Rate",
+       y = "",color = "Consent Law")+
+  theme(legend.position = "none")
+
+ggsave(here::here( "output", "donor_procurement_rate_free_scaled.png"),width = 6, height = 6, dpi  = 150, units = "in", device='png')
+# wihtout free_scales
+p+
+  geom_point(size = 3)+
+facet_wrap(~ consent_law,ncol = 1)+
+    labs(x= "Donor Rrocurement Rate",
+       y = "",color = "Consent Law")+
+  theme(legend.position = "none")
+  
+```
 
 
 
