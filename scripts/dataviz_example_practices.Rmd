@@ -166,6 +166,20 @@ organdata %>%
 Advantage of box plot:
 Putting categorical variables on the y-axis to compare their distributions is a very useful trick. Its makes it easy to effectively present summary data on more categories. The plots can be quite compact and fit a relatively large number of cases in by row. The approach also has the advantage of putting the variable being compared onto the x-axis, which sometimes makes it easier to compare across categories.
 
+```{r}
+# if observation withing each category is too small, then it can be plotted with points,this time color instead of fill.default geom_point() plot shape has a color attribute, but not a fill.
+
+organdata %>% 
+  ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
+  geom_point()+
+  coord_flip()+
+  theme_ipsum()+
+  labs(x = NULL)+
+  theme(legend.position = "top")
+
+
+ggsave(here::here( "output", "plot_point_not_bx_plot.png"))
+```
 
 
 
