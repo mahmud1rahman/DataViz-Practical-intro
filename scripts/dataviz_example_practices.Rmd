@@ -25,7 +25,7 @@ library(tidyverse)
 # devtools::install_github("kjhealy/socviz")
 ```
 
-Aesthetics can be mapped per geom
+## Aesthetics can be mapped per geom
 Below Color is mapped to continent on geom_point not on the smooth.this could be done on globally too 
 ```{r example}
 gapminder <- gapminder::gapminder
@@ -40,6 +40,12 @@ gapminder %>%
 gapminder %>% 
   ggplot(aes(gdpPercap,lifeExp))+
   geom_point(aes(color = log(pop)))+
+  geom_smooth(method = "loess")+
+  scale_x_log10()
+
+gapminder %>% 
+  ggplot(aes(gdpPercap,lifeExp))+
+  geom_point(aes(color = factor(year)))+
   geom_smooth(method = "loess")+
   scale_x_log10()
 
