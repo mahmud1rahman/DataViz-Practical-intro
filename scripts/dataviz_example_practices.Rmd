@@ -258,6 +258,7 @@ ggsave(here::here( "output", "donor_procurement_rate.png"),width = 6, height = 6
 
 ## Facet wrap
 where one axis is categorical, as here, we can free the categorical axis and leave the continuous one fixed. The result is that each panel shares the same x-axis, and it is easy to compare between them.
+Cleveland dotplots are generally preferred to bar or column charts. When making them, put the categories on the y-axis and order them in the way that is most relevant to the numerical summary you are providing. This sort of plot is also an excellent way to summarize model results or any data with with error ranges.
 ```{r}
 p+
  geom_point(size = 3)+
@@ -275,6 +276,18 @@ facet_wrap(~ consent_law,ncol = 1)+
        y = "",color = "Consent Law")+
   theme(legend.position = "none")
   
+```
+
+## Extending  Cleveland-style dotplot
+```{r}
+by_country %>% 
+  ggplot(aes(fct_reorder(country,donors_mean),donors_mean))+
+  geom_pointrange(aes(ymin = donors_mean - donors_sd,
+                      ymax = donors_mean + donors_sd))+
+  coord_flip()+
+  labs(x = "",
+       y = "\nDononrs Procurement Rate")
+# Figure 5.15: A dot-and-whisker plot, with the range defined by the standard deviation of the measured variable.
 ```
 
 
