@@ -153,12 +153,18 @@ organdata %>%
 By default the facets are ordered alphabetically by country
 # Box plot
 ```{r}
+#Boxplots reordered by mean donation rate.
 organdata %>% 
-  ggplot(aes(country,donors))+
-  geom_boxplot()
+  ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, fill = world))+
+  geom_boxplot()+
+  coord_flip()+
+  theme_ipsum()+
+  labs(x = NULL)+
+  theme(legend.position = "top")
 ```
 
-
+Advantage of box plot:
+Putting categorical variables on the y-axis to compare their distributions is a very useful trick. Its makes it easy to effectively present summary data on more categories. The plots can be quite compact and fit a relatively large number of cases in by row. The approach also has the advantage of putting the variable being compared onto the x-axis, which sometimes makes it easier to compare across categories.
 
 
 
