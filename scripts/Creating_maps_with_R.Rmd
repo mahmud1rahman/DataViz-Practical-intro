@@ -1,0 +1,131 @@
+---
+title: "Maps_with_r"
+author: "Mahmudur Rahman"
+date: "05/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+load libraries
+```{r}
+library(tidyverse)
+library(magrittr)
+theme_set(theme_minimal())
+```
+
+Geographical Information System (GIS)
+
+Choropleth maps show geographical regions colored, shaded, or graded according to some variable
+
+geocomputation with r Book:[<https://geocompr.robinlovelace.net/>]
+
+spatial data , spacial distribution in a compeling way .
+Cartography is the study and practice of making and using maps.
+
+
+#choropleth maps with ggplot2
+
+## Map U.S. state-level data
+
+```{r}
+election %>% select(state, total_vote,
+                    r_points, pct_trump, party, census) %>%
+    sample_n(size = 5)
+
+election$fips#  FIPS code is a federal code that numbers states and territories of the US.
+```
+
+```{r}
+# Hex color codes for Dem Blue and Rep Red
+party_colors <- c("#2E74C0", "#CB454A")
+
+p0 <- ggplot(data = subset(election, st %nin% "DC"), # %nin% = not in 
+             aes(x = r_points,
+                           y = reorder(state, r_points),
+                           color = party))
+p1 <- p0+
+geom_vline(xintercept = 0,color= "grey30")+
+  geom_point(size =2)
+  
+p2 <- p1+
+  scale_color_manual(values = party_colors)
+  
+p3 <- p2 +
+  scale_x_continuous(breaks = c(-30, -20, -10, 0, 10, 20, 30, 40),
+                     labels = c("30\n(Clinton)", "20","10","0","10","20","30", "40\n(Trump)"))
+                  
+ p3 +
+   facet_wrap(~ census,ncol = 1,scales = "free_y")+
+   guides(color = F)+
+   labs(x = "Margin Point",
+        y = "")+
+   theme(axis.text = element_text(size = 8))
+
+```
+
+the first task in drawing a map is to get a data frame with the right information in it, and in the right order. First we load R’s maps package, which provides us with some pre-drawn map data
+
+blog with London map[https://towardsdatascience.com/plotting-a-map-of-london-crime-data-using-r-8dcefef1c397]
+
+```{r}
+library(maps)
+us_states <- map_data("state")
+head(us_states)
+dim(us_states)
+
+
+```
+
+We can make a blank state map with this data, using geom_polygon()
+```{r}
+p <- ggplot(data = us_states,
+            mapping = aes(x = long, y = lat,
+                          group = group,fill = region))
+
+p1 <- p + geom_polygon( color = "grey90",size = .1)+
+  guides(fill =F)
+
+#Improving the projection
+p1+
+   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+
+```
+
+data prep
+```{r}
+election$region <- tolower(election$state)
+us_states_elec <- left_join(us_states, election)
+
+us_states_elec %>% 
+  select(1:6) %>% 
+  sample_n(5)
+  
+```
+
+plot in map with newly created df
+```{r}
+p1 <-   us_states_elec %>% 
+  ggplot(aes(long,lat,group = group, fill = party))+
+  geom_polygon(color = "gray90", size = 0.1) +
+    coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+
+p2 <- p1+
+  scale_fill_manual(values = party_colors)+
+  labs(title = "Election Results 2016", fill = NULL)
+
+p2+
+  theme_map()# removes grid lines /axis labels
+  
+  
+```
+
+
+
+
+
+
+
