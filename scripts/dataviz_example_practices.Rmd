@@ -216,6 +216,7 @@ organdata %>%
   ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
   geom_jitter(position = position_jitter(width = 0.15))+
   coord_flip()+
+  # scale_color_discrete(labels = c("c","l","s","not applicable"))+#
   theme_ipsum()+
   labs(x = NULL)+
   theme(legend.position = "top")
@@ -251,7 +252,7 @@ Cleveland dotplots are generally preferred to bar or column charts.
 p <- by_country %>% 
   ggplot(aes(donors_mean,fct_reorder(country,donors_mean),color = consent_law))
 
-p+geom_point(size = 3)+
+p+geom_point(size = 2)+
   labs(x= "Donor Rrocurement Rate",
        y = "",
        color = "Consent Law")+
@@ -261,9 +262,18 @@ ggsave(here::here( "output", "donor_procurement_rate.png"),width = 6, height = 6
 ```
 
 ## Facet wrap
+facet is a best way to avoid over plotting ..
 where one axis is categorical, as here, we can free the categorical axis and leave the continuous one fixed. The result is that each panel shares the same x-axis, and it is easy to compare between them.
 Cleveland dotplots are generally preferred to bar or column charts. When making them, put the categories on the y-axis and order them in the way that is most relevant to the numerical summary you are providing. This sort of plot is also an excellent way to summarize model results or any data with with error ranges.
+
+facet_wrap:scales options  are:
+1.scales = "free" - will have own free axis but it loose the comparibilty in data .
+2.scales = "free_y"
+3.scales = "free_x"
+
+
 ```{r}
+# 
 p+
  geom_point(size = 3)+
 facet_wrap(~ consent_law,scales = "free_y",ncol = 1)+
@@ -280,6 +290,20 @@ facet_wrap(~ consent_law,ncol = 1)+
        y = "",color = "Consent Law")+
   theme(legend.position = "none")
   
+
+
+
+```
+
+## # faced grid 
+it provides a way of graphic pivoting 
+```{r}
+mpg %>% 
+  ggplot(aes(displ,hwy))+
+  geom_point()+
+  facet_grid(year~ drv)
+
+
 ```
 
 ## Extending Cleveland-style dotplot
@@ -349,28 +373,42 @@ elections_historic %>%
 
 ```
 
-# Label outliers
+## Label outliers
+##subset data with ggrepel
 Sometimes we want to pick out some points of interest in the data without labeling every single item. We can still use geom_text() or geom_text_repel(). We just need to pick out the points we want to label. In the code above, we do this on the fly by telling geom_text_repel() to use a different data set from the one geom_point() is using. We do this using the subset() function.
 ```{r}
 p <- ggplot(data = by_country,
             mapping = aes(x = gdp_mean, y = health_mean))
 
 p + geom_point() +
-    geom_text_repel(data = subset(by_country, gdp_mean > 25000),
+    geom_text_repel(data = subset(by_country, health_mean > 3000),
                     mapping = aes(label = country))
 
 p <- ggplot(data = by_country,
             mapping = aes(x = gdp_mean, y = health_mean))
 
+# multiple condition applied
 p + geom_point() +
-    geom_text_repel(data = subset(by_country,
-                                  gdp_mean > 25000 | health_mean < 1500 |
-                                  country %in% "Belgium"),
-                    mapping = aes(label = country))
+  geom_text_repel(data = subset(by_country,gdp_mean >25000 | health_mean<1500 | country  %in% "Belgium"),aes(label = country))
+
+```
+
+Lebelling using dummy variable
+```{r}
+organdata$ind <- organdata$ccode %in% c("Ita", "Spa") &
+                    organdata$year > 1998
+
+p <- ggplot(data = organdata,
+            mapping = aes(x = roads,
+                          y = donors, color = ind))
+p + geom_point() +
+    geom_text_repel(data = subset(organdata, ind),
+                    mapping = aes(label = ccode)) +
+    guides(label = FALSE, color = FALSE)
 ```
 
 # Annotation
-Write and draw in the plot area
+## Write and draw in the plot area
 Sometimes we want to annotate the figure directly. Maybe we need to point out something important that is not mapped to a variable.
 The most obvious use-case is putting arbitrary text on the plot.
 ```{r}
