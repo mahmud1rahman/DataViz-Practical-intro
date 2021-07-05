@@ -369,6 +369,12 @@ p + geom_point() +
                     mapping = aes(label = country))
 ```
 
+# Annotation
+Write and draw in the plot area
+Sometimes we want to annotate the figure directly. Maybe we need to point out something important that is not mapped to a variable.
+The most obvious use-case is putting arbitrary text on the plot.
+```{r}
 
+```
 
 
