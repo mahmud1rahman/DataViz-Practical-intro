@@ -122,7 +122,26 @@ p2+
   
   
 ```
+ 
+ lets can map other variables . Let’s try a continuous measure, such as the percentage of the vote received by Donald Trump.
+```{r}
+p <- us_states_elec %>% 
+  ggplot(aes(long,lat,group = group,fill = pct_trump))+
+  geom_polygon(color = "gray90", size = 0.1)+
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 
+p1 <- p+
+  labs(title = "Trump vote",fill = "Percent")+
+  theme_map()
+
+# change color scale
+p2 <- p1+scale_fill_gradient(low = "white",high = "#CB454A")
+
+p2
+  
+ 
+```
+ 
 
 
 
