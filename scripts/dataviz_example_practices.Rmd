@@ -189,6 +189,8 @@ ggsave(here::here( "output", "plot_point_not_bx_plot.png"),width = 6, height = 6
 
 # geom_jitter
 
+## geom_abline to add reference line in scatterplots
+
 When there is over plotting of observationsin values and in order to get a better sense of how many observations there are at different values we can use geom_jitter.
 geom_jitter randomly nudges observations by a small amount.
 
@@ -197,6 +199,7 @@ geom_jitter randomly nudges observations by a small amount.
 organdata %>% 
   ggplot(aes(fct_reorder(country,donors,na.rm = TRUE),donors, color = world))+
   geom_jitter()+
+  # geom_abline(intercept = 10,size = 5,alpha = .5)+
   coord_flip()+
   theme_ipsum()+
   labs(x = NULL)+
@@ -296,6 +299,7 @@ ggsave(here::here( "output", "dot_and_whisker_plot.png"),width = 5, height = 5, 
 ```
 
 # Plot text directly
+## Text labels with ggrepel
 ```{r}
 # adding text a scatter plot
 
@@ -323,11 +327,47 @@ x_label <- "Winner's share of Popular Vote"
 y_label <- "Winner's share of Electoral College Votes"
   
 
-elections_historic %>% 
-  ggplot(aes())
+# Text labels with ggrepel
+elections_historic %>%
+  ggplot(aes(popular_pct,ec_pct,label = winner_label))+
+  geom_hline(yintercept = 0.5,size = 1.4,color = "grey")+
+  geom_vline(xintercept = 0.5,size = 1.4,color = "grey")+
+  geom_point()+
+  geom_text_repel()+ #labels already defined globally with aes in ggplot calls
+ scale_x_continuous(labels = scales::percent_format(accuracy = 2)) +
+ scale_y_continuous(labels = scales::percent)+
+  labs(x=x_label,
+       y = y_label,
+       title = p_title,
+       subtitle = p_subtitle,
+       caption = p_caption)
+
+
+# Normally it is not a good idea to label every point on a plot in the way we do here. A better approach might be to select a few points of particular interest.
+
+# There is also a geom_abline() geom that draws straight lines based on a supplied slope and intercept. This is useful for plotting, for example, 45 degree reference lines in scatterplots.
+
 ```
 
+# Label outliers
+Sometimes we want to pick out some points of interest in the data without labeling every single item. We can still use geom_text() or geom_text_repel(). We just need to pick out the points we want to label. In the code above, we do this on the fly by telling geom_text_repel() to use a different data set from the one geom_point() is using. We do this using the subset() function.
+```{r}
+p <- ggplot(data = by_country,
+            mapping = aes(x = gdp_mean, y = health_mean))
 
+p + geom_point() +
+    geom_text_repel(data = subset(by_country, gdp_mean > 25000),
+                    mapping = aes(label = country))
+
+p <- ggplot(data = by_country,
+            mapping = aes(x = gdp_mean, y = health_mean))
+
+p + geom_point() +
+    geom_text_repel(data = subset(by_country,
+                                  gdp_mean > 25000 | health_mean < 1500 |
+                                  country %in% "Belgium"),
+                    mapping = aes(label = country))
+```
 
 
 
