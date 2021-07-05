@@ -412,6 +412,21 @@ p + geom_point() +
 Sometimes we want to annotate the figure directly. Maybe we need to point out something important that is not mapped to a variable.
 The most obvious use-case is putting arbitrary text on the plot.
 ```{r}
+p <- ggplot(data = organdata, mapping = aes(x = roads, y = donors))
+
+p+
+  geom_point()+
+  annotate(geom = "text", x = 90, y = 30,color = "red",size = 6,
+                            label = "A surprisingly high \n recovery rate.")
+# annotate() with other geoms
+# add rectangle to plot
+# Using two different geoms with annotate().
+p+
+  geom_point()+
+  annotate("rect", xmin = 128, xmax = 200, ymin = 25, ymax = 35,fill = "grey",
+  alpha = .5)+
+  annotate(geom = "text", x = 90, y = 31,color = "red",size = 5,
+                            label = "A surprisingly high \n recovery rate.")
 
 ```
 
