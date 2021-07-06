@@ -62,5 +62,60 @@ library(cowplot) #contains a well-developed theme suitable for figures
 library(hrbrthemes)
 ```
 
+
+```{r}
+
+library(ggridges)
+p <- ggplot(data = gss_lon,
+            mapping = aes(x = age, y = factor(year, levels = rev(unique(year)),
+                                     ordered = TRUE)))
+
+p + geom_density_ridges(alpha = 0.6, fill = "lightblue", scale = 1.5) +
+    scale_x_continuous(breaks = c(25, 50, 75)) +
+    scale_y_discrete(expand = c(0.01, 0)) + 
+    labs(x = "Age", y = NULL,
+         title = "Age Distribution of\nGSS Respondents") +
+    theme_ridges() +
+    theme(title = element_text(size = 16, face = "bold"))
+```
+
+## time series plots 
+Indexed series with a running difference below, using two separate plots.
+```{r}
+library(cowplot)
+head(fredts)
+fredts_m <- fredts %>% select(date, sp500_i, monbase_i) %>%
+  pivot_longer(cols = sp500_i:monbase_i,
+               names_to = "series",
+               values_to = "score")
+
+p <- fredts_m %>% 
+  ggplot(aes(date,score ,group = series,color = series))
+p1 <- p+
+  geom_line()+
+  theme(legend.position = "top")+
+  labs(x="Date",
+       y = "Index",
+       color = "Series")
+
+p <- fredts %>% 
+  ggplot(aes(date,sp500_i-monbase_i))
+
+p2 <- p+
+  geom_line()
+  
+p2 <- p2+
+  labs(x= "Date",
+       y = "Difference")
+
+# layout as required
+cowplot::plot_grid(p1,p2,nrow = 2,rel_heights = c(0.75, 0.25), align = "v")
+
+
+# Note:layout engine in r called "grid"(gridExtra- helper pkg)
+# cowplot- is more easier to layout plots
+
+```
+
 Considerations when creating /observing a plot 
 When producing a graphic like this in ggplot, or when looking at good plots made by others, it should gradually become your habit to see not just the content of the plot but also the implicit or explicit structure that it has. First, you will be able to see the mappings that form the basis of the plot, picking out which variables are mapped to x and y, and which to to color, fill, shape, label, and so on. What geoms were used to produce them? Second, how have the scales been adjusted? Are the axes transformed? Are the fill and color legends combined? And third, especially as you practice making plots of your own, you will find yourself picking out the **layered* structure of the plot. What is the base layer? What has been drawn on top of it, and in what order? Which upper layers are formed from subsets of the data? Which are new datasets? Are there annotations? The ability to evaluate plots in this way, to apply the grammar of graphics in practice, is useful both for looking at plots and for thinking about how to make them.
